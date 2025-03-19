@@ -22,6 +22,7 @@ jobs:
       fail-fast: false
       matrix:
         policy:
+          - manylinux_2_17
           - manylinux_2_31
           - manylinux_2_35
         platform:
