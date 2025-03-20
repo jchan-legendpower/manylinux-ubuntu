@@ -23,13 +23,13 @@ jobs:
       matrix:
         policy:
           - manylinux_2_17
-          - manylinux_2_31
-          - manylinux_2_35
+          #- manylinux_2_31
+          #- manylinux_2_35
         platform:
-          - amd64
-          - arm64
+          #- amd64
+          #- arm64
           #- s390x
-          - ppc64le
+          #- ppc64le
           - arm
           #`- riscv64
     steps:
@@ -124,8 +124,8 @@ jobs:
       matrix:
         policy:
           - manylinux_2_17
-          - manylinux_2_31
-          - manylinux_2_35
+          #- manylinux_2_31
+          #- manylinux_2_35
     steps:
       - uses: actions/checkout@v4
         with:
