@@ -77,6 +77,11 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      # This is needed for accounts with uppercase letters in their name
+      - name: Generate lowercase namespace
+        run: |
+          echo "NAMESPACE=${GITHUB_REPOSITORY_OWNER@L}" >> "${GITHUB_ENV}"
+
       - name: Push image by digest
         if: github.event_name == 'push'
         id: build
@@ -87,7 +92,7 @@ jobs:
           push: true
           build-args: POLICY=${{ matrix.policy }}
           cache-from: type=gha,scope=${{ matrix.policy }}_${{ matrix.platform }}
-          outputs: type=image,name=ghcr.io/${{ github.repository_owner }}/${{ matrix.policy }},push-by-digest=true,name-canonical=true,push=true
+          outputs: type=image,name=ghcr.io/${{ env.NAMESPACE }}/${{ matrix.policy }},push-by-digest=true,name-canonical=true,push=true
 
       - name: Export digest
         if: github.event_name == 'push'
@@ -164,8 +169,13 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      # This is needed for accounts with uppercase letters in their name
+      - name: Generate lowercase namespace
+        run: |
+          echo "NAMESPACE=${GITHUB_REPOSITORY_OWNER@L}" >> "${GITHUB_ENV}"
+
       - name: Create manifest list and push
         working-directory: /tmp/digests
         run: |
           docker buildx imagetools create $(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON") \
-            $(printf 'ghcr.io/${{ github.repository_owner }}/${{ matrix.policy }}@sha256:%s ' *)
+            $(printf 'ghcr.io/${{ env.NAMESPACE }}/${{ matrix.policy }}@sha256:%s ' *)
